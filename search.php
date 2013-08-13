@@ -22,8 +22,13 @@ if(!mysql_select_db(DB_NAME, $dbconn)) {
 echo 'Connected to database ' . DB_NAME . '\n';
 
 // (3) Run the query on the winestore through the connection
-$query_region = "SELECT region_name FROM winestore.region ORDER BY region_name";
+$query_region = "SELECT * FROM winestore.region ORDER BY region_name";
 if (!($result_region = @ mysql_query ($query_region, $dbconn))) {
+	showerror();
+	exit;
+}
+$query_grapeVariety = "SELECT * FROM winestore.grape_variety ORDER BY variety";
+if (!($result_grapeVariety = @ mysql_query ($query_grapeVariety, $dbconn))) {
 	showerror();
 	exit;
 }
@@ -44,10 +49,14 @@ if (!($result_region = @ mysql_query ($query_region, $dbconn))) {
 		</select> 
 	<br>Select a grape variety : 
 		<select name="grapeVariety">
-			<option value="volvo">Volvo</option>
-			<option value="saab">Saab</option>
-			<option value="opel">Opel</option>
-			<option value="audi">Audi</option>
+			<option value="All">All</option>
+			<?php 
+			// While there are still rows in the result set,
+			// fetch the current row into $row
+			while ($row = @ mysql_fetch_array($result_grapeVariety)) {
+				echo "<option value=".$row["variety"].">".$row["variety"]."</option>";
+			}
+			?>
 		</select>
 	<br>Select a range of years : 
 		between year
